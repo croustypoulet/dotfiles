@@ -1,0 +1,53 @@
+#### Common shell configuration
+source "${HOME}/.shell_common"
+
+#### Prompt
+source "${HOME}/.zsh/theme.zsh"
+
+#### HISTORY (zsh-specific options)
+HISTFILE=~/.zsh_history
+setopt inc_append_history       # immediately append to history file
+setopt extended_history         # record timestamp
+setopt hist_expire_dups_first   # expire dup entries first upon trimming history
+setopt hist_ignore_dups
+setopt hist_ignore_all_dups
+setopt hist_find_no_dups
+setopt hist_ignore_space        # don't record entry starting with a space
+setopt hist_reduce_blanks
+setopt hist_save_no_dups
+setopt share_history
+unsetopt hist_verify
+
+#### fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+#### Autocompletion
+# see https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+  autoload -Uz compinit
+  compinit
+fi
+
+# autocompletion highlighting
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
+#### Navigation
+## line
+# * https://stackoverflow.com/a/1438523/626278
+autoload -U select-word-style
+select-word-style bash
+# * https://gist.github.com/acamino/2bc8df5e2ed0f99ddbe7a6fddb7773a6)
+bindkey -e
+bindkey \^u backward-kill-line
+
+#### Tool activations
+if [ -x ~/.local/bin/mise ]; then
+    eval "$(~/.local/bin/mise activate zsh)"
+fi
+
+if which atuin >/dev/null 2>&1; then
+    eval "$(atuin init zsh)"
+fi

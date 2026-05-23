@@ -1,0 +1,66 @@
+[user]
+    name = "Thomas"
+    email = "287185878+croustypoulet@users.noreply.github.com"
+{{ if lookPath "op" }}    signingkey = {{ onepasswordRead "op://a44zfryykk4y2rmih37fvqj6xa/wzg7ukmubbz3ypslgdeqd5j5fm/public key" }} # see 'op://Private/Github signing key/public key'
+{{ end -}}
+
+[includeIf "gitdir/i:/Users/"]
+  path = ~/.gitconfig.1password.osx
+
+[gpg]
+    format = ssh
+[commit]
+	gpgsign = {{ if lookPath "op" }}true{{ else }}false{{ end }}
+[color]
+    ui = auto
+[help]
+    autocorrect = 5
+[merge]
+    conflictstyle = diff3
+[diff]
+    wordRegex = .
+    tool = difftastic
+[difftool]
+    prompt = false
+[difftool "difftastic"]
+    cmd = difft "$LOCAL" "$REMOTE"
+[pager]
+    # Use a pager for large output, just like other git commands.
+    difftool = true
+[rebase]
+    autoSquash = true
+    autoStash = true
+    missingCommitsCheck = "warn"
+[alias]
+    showt = show --ext-diff
+    difft = difftool
+    br = branch -avv
+    st = status
+    co = checkout
+    stat = show --stat
+    # see git objects:
+    object = cat-file -p
+    type = cat-file -t
+    # show full history with graph & branches:
+    hist = log --graph --pretty=format:'%Cred%h%Creset -%C(magenta)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    # concisely display last 10 recent commits: 10 last commits):
+    head = hist -10
+    # list commits that modified a given file:
+    history = whatchanged --follow --pretty=format:'%Cred%h%Creset -%C(magenta)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    # list filetree at given revision:
+    ls = ls-tree -r --name-only --full-tree
+    # show commit messages for a particular loc: $1 => file, $2 => line
+    line = !sh -c 'git log --topo-order --graph -u -L$2,$2:$1' -
+    fixup = "!sh -c 'revision="$( git rev-parse $1 )" && git commit --fixup="${revision}" && git rebase -i --autosquash "${revision}"^' -"
+    squash = "!sh -c 'revision="$( git rev-parse $1 )" && git commit --squash="${revision}" && git rebase -i --autosquash "${revision}"^' -"
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	editor = nvim
+[push]
+	default = current

@@ -1,0 +1,10 @@
+# 1password ssh agent setup:
+{{ if eq .chezmoi.os "darwin" -}}
+Host *
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{ end -}}
+
+Host github.com
+  HostName github.com
+  IdentityFile ~/.ssh/github_perso.pub
+  IdentitiesOnly yes
